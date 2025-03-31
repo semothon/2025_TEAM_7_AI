@@ -4,7 +4,7 @@
 ```python
 pip install fastapi uvicorn
 ```
-### 3. root directory(이 파일이 있는 위치임)에서 다음 실행
+### 3. root directory(이 파일이 있는 loopin_ai 디렉토리 내부에 있는 loopin_ai 디렉토리)에서 다음 실행
 ```python
 python -m uvicorn main:app --reload
 ```
