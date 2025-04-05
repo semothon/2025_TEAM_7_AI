@@ -68,11 +68,7 @@ class IDCard:
     def process_image(self, src: np.ndarray) -> tuple:
         # Convert to grayscale
         gray = cv2.cvtColor(self.src, cv2.COLOR_BGR2GRAY)
-        
-        # Apply Gaussian blur
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        
-        # Apply Canny edge detection
         edged = cv2.Canny(blurred, 75, 200)
         
         return (gray, blurred, edged)
@@ -82,14 +78,14 @@ class IDCard:
     
     def to_dict(self):
         return {
-            "name": self.name,
+            "university": self.universityName,
             "college": self.college,
             "department": self.department,
+            "name": self.name,
             "student_id": self.student_id
         }
 
 class KyungheeLagacy(IDCard):
-
     def __init__(self, src: np.ndarray):
         self.universityName: str = "경희대학교"
         self.src = src
@@ -155,20 +151,21 @@ class KyungheeLagacy(IDCard):
 
 class Kyunghee(IDCard):
     def __init__(self, src: np.ndarray):
-        super().__init__()
+        self.universityName: str = "경희대학교"
         self.src = src
-        self.edged = self.process_image()
+        self.name: str = ""
+        self.college: str = ""
+        self.department: str = ""
+        self.gray, self.blurred, self.edged = self.process_image(src)
         self.reader = easyocr.Reader(['en', 'ko'], gpu=torch.cuda.is_available())
-        self.result = self.reader.readtext(self.edged, detail=0)
-
+        self.result = self.reader.readtext(self.src, detail = 0)
+        self.student_id: int = self.extract_info()
+        
     def extract_info(self):
-        # Extract name, college, department, student ID from the result
-        for text in self.result:
-            if "Name" in text:
-                self.name = text.split(":")[1].strip()
-            elif "College" in text:
-                self.college = text.split(":")[1].strip()
-            elif "Department" in text:
-                self.department = text.split(":")[1].strip()
-            elif "Student ID" in text:
-                self.student_id = int(text.split(":")[1].strip())
+        for i, text in enumerate(self.result):
+            if '\'' in text:
+                text = text.replace('\'', '')
+            text.strip()
+            if len(text) == 10 and text.isdigit():
+                return int(text)
+        return 0

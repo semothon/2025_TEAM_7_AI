@@ -15,7 +15,7 @@ class University(Enum):
     KYUNGHEE = 1
 
 # 샘플 이미지 위치
-SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample2.jpg')
+SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample4.jpg')
 DEPARTMENT_DATA_PATH = Path(__file__).parent.parent / Path('data/departments.csv')
 dapartments_table = np.loadtxt(str(DEPARTMENT_DATA_PATH), dtype=str, delimiter=',', encoding='utf-8')
 
@@ -28,8 +28,7 @@ if src is None:
 
 # 학교명 탐색
 reader = easyocr.Reader(['en', 'ko'], gpu=torch.cuda.is_available())
-result = reader.readtext(src, detail = 0)
-print(result)
+result = reader.readtext(src, detail = 1)
 university = University.UNKNOWN
 for i, elem in enumerate(result):
     text = elem[1]
@@ -52,7 +51,7 @@ contours, hierarchy = cv2.findContours(otsu, cv2.RETR_LIST, cv2.CHAIN_APPROX_NON
 
 origin_area = src.shape[0] * src.shape[1]
 min_area = origin_area * 0.5  # 최소 면적 설정
-max_area = origin_area * 0.99  # 최대 면적 설정
+max_area = origin_area * 0.97  # 최대 면적 설정
 
 # 설정한 면적 범위 안에서 외곽선 찾으면 크롭, 아니면 원본 이미지 전체를 학생증으로 인식
 crop_img = src.copy()
@@ -63,18 +62,23 @@ for cnt in contours:
         crop_img = crop_img[y:y+height, x:x+width]
         break
 
+# plt.imshow(cv2.cvtColor(crop_img, cv2.COLOR_BGR2RGB))
+# plt.show()
+
 # 신형 학생증이면 선명한 붉은톤, 구형 학생증이면 흰 톤
 b, g, r = cv2.split(crop_img)
-is_legacy_card = b.mean() + g.mean() > r.mean()
+is_legacy_card = b.mean() + g.mean() > r.mean() * 1.25
 id_card: idcard.IDCard = None
-print(university)
 if(university == University.KYUNGHEE):
     if is_legacy_card:
         print("Legacy ID Card detected.")
         id_card = idcard.KyungheeLagacy(crop_img)
         student_info = json.dumps(id_card.to_dict(), ensure_ascii=False)
+        print(student_info)
     else:
         print("New ID Card detected.")
-        # id_card = idcard.Kyunghee(crop_img)
+        id_card = idcard.Kyunghee(crop_img)
+        student_info = json.dumps(id_card.to_dict(), ensure_ascii=False)
+        print(student_info)
 else:
     print("Unknown ID Card detected.")
