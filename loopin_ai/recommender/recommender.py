@@ -1,5 +1,7 @@
 import os
 import tiktoken
+import json
+from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
@@ -7,16 +9,11 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAI
 from dotenv import load_dotenv
-import json
 
 DAYS = {"MON": "월요일", "TUE": "화요일", "WED": "수요일", "THU": "목요일", "FRI": "금요일", "SAT": "토요일", "SUN": "일요일"}
 
-load_dotenv()
+load_dotenv(override=True)
 print(f"[API KEY]\n{os.environ['OPENAI_API_KEY']}\n")
-
-# 테스트용 json 파일 로드. 배포용 코드에서는 사용 X
-with open("loopin_ai/example.json", "r", encoding="utf-8") as f:
-    json_data = json.load(f)
 
 llm = ChatOpenAI(model="gpt-4o-mini")
 
@@ -78,33 +75,26 @@ def create_template_message(json):
 출력 예시 3) 없음"""))
     return msg_list
 
-prompt = ChatPromptTemplate.from_messages(create_template_message(json_data))
+def make_recommendation(json: list[dict], req_message: str) -> list:
+    prompt = ChatPromptTemplate.from_messages(create_template_message(json))
+    chain = prompt | llm | StrOutputParser()
+    result = chain.invoke({"UserInput": [HumanMessage(content=req_message)]})
+    print(result)
+    if result == "없음":
+        return []
+    else:
+        try:
+            result = result.split(",")
+            for i, elem in enumerate(result):
+                elem = elem.strip()
+                if elem.isdigit():
+                    result[i] = int(elem)
+            return result
+        except:
+            return []
 
-chain = prompt | llm | StrOutputParser()
-
-result = chain.invoke({"UserInput": [HumanMessage(content="활동적인 사람에게 맞는 모임을 5개 추천해줘.")]})
-print(result)
-
-"""
-chat_prompt = ChatPromptTemplate.from_messages([
-    ("system", "당신은 모임 애플리케이션에서 사용자에게 추천을 제공하는 AI입니다."),
-    ("user", "{input}"),
-])
-"""
-
-
-
-
-"""
-client = openai.OpenAI()
-response = client.chat.completions.create(
-  model="gpt-4o-mini",
-  messages=[
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Who won the world series in 2020?"},
-    {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-    {"role": "user", "content": "Where was it played?"}
-  ]
-)
-print(response.choices[0].message.content)
-"""
+if __name__ == "__main__":
+    # 테스트용 json 파일 로드
+    with open(Path(__file__).parent / "example.json", "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+    result = make_recommendation(json_data, "활동적인 사람에게 적합한 모임을 골라줘.")
