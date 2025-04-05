@@ -15,8 +15,8 @@ class University(Enum):
     KYUNGHEE = 1
 
 # 샘플 이미지 위치
-SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample1.jpg')
-DEPARTMENT_DATA_PATH = Path(__file__).parent.parent / Path('data/departments.csv')
+SAMPLE_IMAGE_PATH = Path(__file__).parent.parent.parent / Path('img/sample1.jpg')
+DEPARTMENT_DATA_PATH = Path(__file__).parent.parent.parent / Path('data/departments.csv')
 dapartments_table = np.loadtxt(str(DEPARTMENT_DATA_PATH), dtype=str, delimiter=',', encoding='utf-8')
 
 # 이미지 파일 읽기

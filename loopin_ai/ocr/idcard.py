@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from boundbox import BoundBox
 
-DEPARTMENT_DATA_PATH = Path(__file__).parent.parent / Path('data/departments.csv')
+DEPARTMENT_DATA_PATH = Path(__file__).parent.parent.parent / Path('data/departments.csv')
 dapartments_table = np.loadtxt(str(DEPARTMENT_DATA_PATH), dtype=str, delimiter=',', encoding='utf-8')
 
 def get_college(input: str) -> tuple:
