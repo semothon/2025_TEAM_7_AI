@@ -48,6 +48,7 @@ def create_template_message(json):
     
     for club in json:
         day_and_time = club['whenMeet'] # 비어있으면 None
+        print(day_and_time)
         # date_and_time 문자열에서 요일과 시간 정보 추출
         day_time_string = ""
         if day_and_time is not None:
@@ -58,7 +59,7 @@ def create_template_message(json):
             time = day_and_time[len(day_and_time) - 1].split(" ")
             for elem in day_list:
                 day_time_string += DAYS[elem] + ", "
-            day_time_string += time[0][:2] + ":" + time[0][2:] + " - "+ time[1][:2] + ":" + time[1][2:]
+            day_time_string += time[0][:2] + ":" + time[0][2:] + " - " + time[1][:2] + ":" + time[1][2:]
         else:
             day_time_string = "미정"
             
