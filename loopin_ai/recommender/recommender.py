@@ -9,7 +9,10 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 
-DAYS = {"MON": "월요일", "TUE": "화요일", "WED": "수요일", "THU": "목요일", "FRI": "금요일", "SAT": "토요일", "SUN": "일요일"}
+DAYS = {"MON": "월요일", "TUE": "화요일", "WED": "수요일", "THU": "목요일",
+        "FRI": "금요일", "SAT": "토요일", "SUN": "일요일",
+        "월": "월요일", "화": "화요일", "수": "수요일", "목": "목요일",
+        "금": "금요일", "토": "토요일", "일": "일요일"}
 
 SYS_PROMPT_MSG = "당신은 모임 애플리케이션에서 사용자에게 모임을 추천하는 AI입니다."
 
