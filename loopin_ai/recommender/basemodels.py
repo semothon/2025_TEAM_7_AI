@@ -26,4 +26,4 @@ class Party(BaseModel):
 class RecommendRequest(BaseModel):
     content: str
     parties: list[Party]
-    user: User  # ✅ 사용자 정보도 함께 받음
+    user: User

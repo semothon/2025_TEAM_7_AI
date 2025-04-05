@@ -19,9 +19,6 @@ def recommend(request: RecommendRequest):
     print("🙋‍♂️ user:", request.user.username)
     print("🧠 content:", request.content)
     
-    party_list: list[dict] = []
-    for party in request.parties:
-        dict_party = party.model_dump()
-        party_list.append(dict_party)
+    party_list: list[dict] = [party.model_dump() for party in request.parties]
     result_list = rec.make_recommendation(party_list, request.content)
     return JSONResponse(content={"ids": result_list})
