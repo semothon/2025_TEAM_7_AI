@@ -59,7 +59,10 @@ def create_template_message(json):
             time = day_and_time[len(day_and_time) - 1].split(" ")
             for elem in day_list:
                 day_time_string += DAYS[elem] + ", "
-            day_time_string += time[0][:2] + ":" + time[0][2:] + " - " + time[1][:2] + ":" + time[1][2:]
+            if len(day_and_time) == 2:
+                day_time_string += time[0][:2] + ":" + time[0][2:] + " - " + time[1][:2] + ":" + time[1][2:]
+            else:
+                day_time_string += "시간 정보 미정"
         else:
             day_time_string = "미정"
             
