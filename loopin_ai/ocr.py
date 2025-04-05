@@ -6,12 +6,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 from PIL import ImageFont, ImageDraw, Image
-#import idcard
+from enum import Enum
+
+class University(Enum):
+    UNKNOWN = 0
+    KYUNGHEE = 1
+
+#import idcard;
 
 # easyocr은 tesseract보다 느리지만 다중언어 인식이 뛰어나고 인식률이 높다.
 
 # 샘플 이미지 위치
-SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample5.jpg')
+SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample2.jpg')
 
 # 이미지 파일 읽기
 # 파일 경로 대신 OpenCV image object(numpy array) 또는 이미지 파일을 바이트로 전달할 수도 있다.
@@ -19,6 +25,20 @@ src:np.ndarray = cv2.imread(str(SAMPLE_IMAGE_PATH))
 if src is None:
     print("Image load failed!")
     sys.exit()
+
+# 학교명 탐색
+reader = easyocr.Reader(['en', 'ko'], gpu=torch.cuda.is_available())
+result = reader.readtext(src, detail = 1)
+university = University.UNKNOWN
+for i, elem in enumerate(result):
+    text = elem[1]
+    intersection = len(set.intersection(*[set("KYUNG HEE"), set(text)]))
+    union = len(set.union(*[set("KYUNG HEE"), set(text)]))
+    jaccard_similarity = intersection / float(union)
+    if jaccard_similarity > 0.75:
+        unversity = University.KYUNGHEE
+        break
+print(f"University: {unversity.name}")
 
 # 이미지 전처리: 회색조 변환, 가우시안 블러, 캐니 엣지 검출
 gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -48,9 +68,10 @@ plt.imshow(crop_img)
 plt.show()
 is_legacy_card = b.mean() + g.mean() > r.mean()
 #id_card: idcard.IDCard = None
-if is_legacy_card:
-    print("Legacy ID Card detected.")
-    # id_card = idcard.KyungheeLagacy(crop_img)
-else:
-    print("New ID Card detected.")
-    # id_card = idcard.Kyunghee(crop_img)
+if(university == University.KYUNGHEE):
+    if is_legacy_card:
+        print("Legacy ID Card detected.")
+        # id_card = idcard.KyungheeLagacy(crop_img)
+    else:
+        print("New ID Card detected.")
+        # id_card = idcard.Kyunghee(crop_img)
