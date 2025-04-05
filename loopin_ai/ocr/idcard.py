@@ -103,7 +103,7 @@ class KyungheeLagacy(IDCard):
         name = name_data[1]
         name_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
         if not name_box_normalized.is_point_inside(0.35, 0.1):
-            return None
+            return None, None, None, None
         
         
         college_data = self.result[1]
@@ -111,7 +111,7 @@ class KyungheeLagacy(IDCard):
         college_index, college = get_college(college_data[1])
         college_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
         if(not college_box_normalized.is_point_inside(0.35, 0.19)) or college_index == -1:
-            return None
+            return None, None, None, None
 
         department_data = self.result[2]
         box = department_data[0]
@@ -120,27 +120,27 @@ class KyungheeLagacy(IDCard):
         # 세부전공 정보 제거
         if("|" in department_input):
             department_input = department_input.split("|")[0]
-            department_input.strip()
+            department_input = department_input.strip()
         elif("/") in department_input:
             department_input = department_input.split("/")[0]
-            department_input.strip()
+            department_input = department_input.strip()
         
         department_index, department = get_department(college_index, department_input)
         department_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
         if(not department_box_normalized.is_point_inside(0.35, 0.25)) or department_index == -1:
-            return None
+            return None, None, None, None
 
         student_id_data = self.result[3]
         box = student_id_data[0]
         if len(student_id_data[1]) != 10:
-            return None
+            return None, None, None, None
         try:
             student_id = int(student_id_data[1])
         except:
-            return None
+            return None, None, None, None
         student_id_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
         if(not student_id_box_normalized.is_point_inside(0.35, 0.33)):
-            return None
+            return None, None, None, None
         
         return (name, college, department, student_id)
 
@@ -160,7 +160,7 @@ class Kyunghee(IDCard):
         for i, text in enumerate(self.result):
             if '\'' in text:
                 text = text.replace('\'', '')
-            text.strip()
+            text = text.strip()
             if len(text) == 10 and text.isdigit():
                 return int(text)
         return 0
