@@ -15,7 +15,7 @@ class University(Enum):
     KYUNGHEE = 1
 
 # 샘플 이미지 위치
-SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample1.jpg')
+SAMPLE_IMAGE_PATH = Path(__file__).parent.parent / Path('img/sample2.jpg')
 DEPARTMENT_DATA_PATH = Path(__file__).parent.parent / Path('data/departments.csv')
 dapartments_table = np.loadtxt(str(DEPARTMENT_DATA_PATH), dtype=str, delimiter=',', encoding='utf-8')
 
@@ -28,7 +28,8 @@ if src is None:
 
 # 학교명 탐색
 reader = easyocr.Reader(['en', 'ko'], gpu=torch.cuda.is_available())
-result = reader.readtext(src, detail = 1)
+result = reader.readtext(src, detail = 0)
+print(result)
 university = University.UNKNOWN
 for i, elem in enumerate(result):
     text = elem[1]
