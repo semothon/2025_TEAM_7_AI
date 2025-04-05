@@ -93,7 +93,6 @@ class KyungheeLagacy(IDCard):
         self.reader = easyocr.Reader(['en', 'ko'], gpu=torch.cuda.is_available())
         self.result = self.reader.readtext(self.src, detail=1)[:4]
         self.name, self.college, self.department, self.student_id = self.extract_info()
-        print("Done")
 
     def extract_info(self):
         src_h = (float)(self.src.shape[0])
@@ -103,7 +102,6 @@ class KyungheeLagacy(IDCard):
         box = name_data[0]
         name = name_data[1]
         name_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
-        print(name_box_normalized)
         if not name_box_normalized.is_point_inside(0.35, 0.1):
             return None
         
@@ -112,7 +110,6 @@ class KyungheeLagacy(IDCard):
         box = college_data[0]
         college_index, college = get_college(college_data[1])
         college_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
-        print(college_box_normalized)
         if(not college_box_normalized.is_point_inside(0.35, 0.19)) or college_index == -1:
             return None
 
@@ -130,7 +127,6 @@ class KyungheeLagacy(IDCard):
         
         department_index, department = get_department(college_index, department_input)
         department_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
-        print(department_box_normalized)
         if(not department_box_normalized.is_point_inside(0.35, 0.25)) or department_index == -1:
             return None
 
@@ -143,7 +139,6 @@ class KyungheeLagacy(IDCard):
         except:
             return None
         student_id_box_normalized = BoundBox((float)(box[0][0]) / src_w, (float)(box[0][1]) / src_h, (float)(box[2][0]) / src_w, (float)(box[2][1]) / src_h)
-        print(student_id_box_normalized)
         if(not student_id_box_normalized.is_point_inside(0.35, 0.33)):
             return None
         
