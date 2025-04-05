@@ -8,11 +8,12 @@ from pathlib import Path
 
 class IDCard:
     def __init__(self):
+        self.universityName: str = ""
         self.name: str = ""
         self.college: str = ""
         self.department: str = ""
         self.student_id: int = 0
-        self.gary = None
+        self.gray = None
         self.blurred = None
         self.edged = None
 
@@ -41,11 +42,12 @@ class IDCard:
 
 class KyungheeLagacy(IDCard):
     def __init__(self, src: np.ndarray):
-        super().__init__()
+        self.universityName: str = "경희대학교"
         self.src = src
-        self.edged = self.process_image()
+        self.gray, self.blurred, self.edged = self.process_image(self.src)
         self.reader = easyocr.Reader(['en', 'ko'], gpu=torch.cuda.is_available())
-        self.result = self.reader.readtext(self.edged, detail=0)
+        self.result = self.reader.readtext(self.src, detail=1)[:4]
+        print(self.result)
 
     def extract_info(self):
         # Extract name, college, department, student ID from the result
