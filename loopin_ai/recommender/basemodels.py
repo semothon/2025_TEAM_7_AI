@@ -6,7 +6,7 @@ class User(BaseModel):
     university: str
     department: str
     studentId: str
-    grade: str
+    grade: int
 
 class Party(BaseModel):
     id: int
