@@ -7,8 +7,8 @@
 대학생들을 위한 실명 기반 취미 모임 플랫폼입니다.
 
 ### FE/BE 저장소 같이 보기
-(Loopin FE 저장소: https://github.com/semothon/2025_TEAM_7_FE)
-(Loopin BE 저장소: https://github.com/semothon/2025_TEAM_7_FE)
+- Loopin FE 저장소: https://github.com/semothon/2025_TEAM_7_FE
+- Loopin BE 저장소: https://github.com/semothon/2025_TEAM_7_FE
 
 ### 하위 기능 설명
 ##### /ocr
