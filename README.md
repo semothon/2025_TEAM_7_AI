@@ -8,7 +8,7 @@
 
 ### FE/BE 저장소 같이 보기
 - Loopin FE 저장소: https://github.com/semothon/2025_TEAM_7_FE
-- Loopin BE 저장소: https://github.com/semothon/2025_TEAM_7_FE
+- Loopin BE 저장소: https://github.com/semothon/2025_TEAM_7_BE
 
 ### 하위 기능 설명
 ##### /ocr
